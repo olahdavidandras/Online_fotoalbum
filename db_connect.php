@@ -4,11 +4,13 @@ $username = "root";
 $password = "";
 $dbname = "online_fotoalbum";
 
-$con = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-if ($con->connect_error) {
-    die("Kapcsolodasi hiba: " . $con->connect_error);
+if ($conn->connect_error) {
+    die("Kapcsolódási hiba: " . $conn->connect_error);
 }else{
-    echo "Sikeres csatlakozas" . "<br>";
+    echo "Sikeres csatlakozás!" . "<br>";
 }
+
+//return $con;
 ?>
