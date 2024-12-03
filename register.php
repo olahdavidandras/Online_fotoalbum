@@ -1,52 +1,39 @@
 <?php
 session_start();
 include 'db_connect.php';
+include 'User.php';
+
+if (!file_exists('db_connect.php')) {
+    die("Nem található a kapcsolatot indító file!");
+}
 
 if (!isset($conn)) {
     die("Hiba: Nincs adatbázis kapcsolat!");
 }
 
+if ($conn->connect_error) {
+    die("Kapcsolódási hiba: " . $conn->connect_error);
+} else {
+    echo "Sikeresen csatlakozva<br>";
+}
+
+$user = new User($conn);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
     $password = $_POST['password'];
-    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-    $conn->begin_transaction();
-    try {
-        // Ellenőrizzük, hogy az e-mail cím már létezik-e
-        $sql = "SELECT email FROM users WHERE email = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->store_result();
-
-        if ($stmt->num_rows > 0) {
-            echo "<p style='color: red;'>Ez az email cím már regisztrálva van.</p>";
-        } else {
-            $stmt->close();
-
-            // Új felhasználó hozzáadása
-            $sql
-                = "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sss", $username, $email, $passwordHash);
-
-            if ($stmt->execute()) {
-                echo "<p style='color: green;'>Regisztráció sikeres!</p>";
-            } else {
-                throw new Exception("Hiba a beszúrás során: " . $stmt->error);
-            }
-        }
-
-        $conn->commit();
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo "<p style='color: red;'>Hiba történt: " . $e->getMessage()
-            . "</p>";
+    /*Meghivodik a User osztaly register metodusa, amely megprobalja
+    regisztralni a felhasznalot az adatbazisba
+    Ez ha helyes akkor visszaterit a true-t, maskepp false-t*/
+    if ($user->register($username, $email, $password)) {
+        echo "Sikeres regisztráció! <a href='login.php'>Jelentkezz be itt</a>";
+    } else {
+        echo "Ez az email cím már létezik. Próbálj meg másik email címmel regisztrálni.";
     }
-    $stmt->close();
 }
+
 ?>
 
 <!DOCTYPE html>
