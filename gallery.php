@@ -1,12 +1,14 @@
 <?php
+require_once 'db_connect.php';
+require_once 'Picture.php';
+require_once 'Tags.php';
+
 session_start();
-include 'db_connect.php';
-include 'User.php';
 
-if (!file_exists('db_connect.php')) {
-    die("Nem található a kapcsolatot indító file!");
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
 }
-
 if (!isset($conn)) {
     die("Hiba: Nincs adatbázis kapcsolat!");
 }
@@ -17,13 +19,10 @@ if ($conn->connect_error) {
     echo "Sikeresen csatlakozva<br>";
 }
 
-echo "Szia";
+$picture = new Picture($conn);
+$tags = new Tags($conn);
 
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
+$photos = $picture->getPhotosByUser($_SESSION['user_id']);
 ?>
 
 <!DOCTYPE html>
@@ -34,9 +33,38 @@ if (!isset($_SESSION['user_id'])) {
     <title>Galéria</title>
 </head>
 <body>
-<h2>Üdvözlünk a galériában!</h2>
-<p>Itt elérheted a tartalmaidat.</p>
+<h2>Galéria</h2>
+<form action="upload.php" method="GET">
+    <button type="submit">Feltöltés</button>
+</form>
+x`
+<?php if (!empty($photos)): ?>
+    <?php foreach ($photos as $photo): ?>
+        <div>
+            <h3><?= htmlspecialchars($photo['title']) ?></h3>
+            <img src="data:image/jpeg;base64,<?= base64_encode(
+                $photo['photo_data']
+            ) ?>"
+                 alt="<?= htmlspecialchars($photo['title']) ?>"
+                 style="max-width: 200px;">
+            <p><?= htmlspecialchars($photo['description']) ?></p>
+            <p><strong>Címkék:</strong>
+                <?php
+                // Lekérjük az aktuális képhez tartozó címkéket
+                $photoTags = $tags->getTagsForPhoto($photo['photo_id']);
+                echo empty($photoTags)
+                    ? "Nincs címke"
+                    : implode(
+                        ", ", array_map('htmlspecialchars', $photoTags)
+                    );
+                ?>
+            </p>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p>Nincsenek feltöltött képek.</p>
+<?php endif; ?>
 
-<a href="logout.php">Kilépés</a> <!-- Kilépési link -->
+
 </body>
 </html>
