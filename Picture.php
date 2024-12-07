@@ -67,6 +67,18 @@ adatbazis kapcsolat fogja hasznalni
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getSharedPhotos()
+    {
+        $sql = "SELECT p.photo_id, p.title, p.description, p.photo_data, p.created_at, u.username 
+            FROM photos p 
+            INNER JOIN users u ON p.user_id = u.user_id 
+            WHERE p.is_shared = 1 
+            ORDER BY p.created_at DESC";
+        $result = $this->conn->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+
 }
 
 ?>
