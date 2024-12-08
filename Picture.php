@@ -42,7 +42,7 @@ adatbazis kapcsolat fogja hasznalni
         /*Lekerdezi a felhasznalo osszes kepet idorend szerint a legujabb
         sorrendben*/
         $sql
-            = "SELECT photo_id, title, description, photo_data, created_at FROM photos WHERE user_id = ? ORDER BY created_at DESC";
+            = "SELECT photo_id, title, description, photo_data, created_at, is_shared FROM photos WHERE user_id = ? ORDER BY created_at DESC";
         $stmt = $this->conn->prepare($sql);
 
         if ($stmt) {
@@ -76,6 +76,55 @@ adatbazis kapcsolat fogja hasznalni
             ORDER BY p.created_at DESC";
         $result = $this->conn->query($sql);
         return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function updatePhoto($photoId, $title, $description)
+    {
+        $sql
+            = "UPDATE photos SET title = ?, description = ? WHERE photo_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ssi", $title, $description, $photoId);
+        return $stmt->execute();
+    }
+
+    public function deletePhoto($photoId)
+    {
+        $sql = "DELETE FROM photos WHERE photo_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $photoId);
+        return $stmt->execute();
+    }
+
+    public function sharePhoto($photoId)
+    {
+        $sql = "UPDATE photos SET is_shared = 1 WHERE photo_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $photoId);
+        return $stmt->execute();
+    }
+
+    public function unsharePhoto($photoId)
+    {
+        $sql = "UPDATE photos SET is_shared = 0 WHERE photo_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $photoId);
+        return $stmt->execute();
+    }
+
+    public function getPhotoById($photoId)
+    {
+        $sql = "SELECT photo_id, user_id, title, description, photo_data, created_at, is_shared 
+            FROM photos 
+            WHERE photo_id = ?";
+        $stmt = $this->conn->prepare($sql);
+
+        if ($stmt) {
+            $stmt->bind_param("i", $photoId);
+            $stmt->execute();
+            return $stmt->get_result()->fetch_assoc();
+        }
+
+        return null;
     }
 
 

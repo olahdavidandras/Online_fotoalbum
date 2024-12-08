@@ -9,6 +9,7 @@ class Comment
         $this->conn = $db;
     }
 
+
     public function addComment($photoId, $userId, $commentText)
     {
         $sql = "INSERT INTO comments (photo_id, user_id, comment_text, created_at) 
