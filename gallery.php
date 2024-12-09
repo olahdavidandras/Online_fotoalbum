@@ -68,6 +68,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "A komment nem lehet üres!";
         }
     }
+
+    if (!empty($tags)) {
+        echo '<ul>';
+        foreach ($tags as $tag) {
+            echo '<li>' . htmlspecialchars($tag['name']) . '</li>';
+        }
+        echo '</ul>';
+    } else {
+        echo 'Nincsenek címkék.';
+    }
+
 }
 ?>
 
@@ -165,6 +176,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Mégse
                 </button>
             </form>
+            <p><strong>Címkék:</strong>
+                <?php
+                $photoTags = $tags->getTagsForPhoto($photo['photo_id']);
+                if ($photoTags) {
+                    echo implode(', ', array_column($photoTags, 'tag_name'));
+                } else {
+                    echo 'Nincsenek címkék.';
+                }
+                ?>
+            </p>
+
 
             <!-- Kommentek -->
             <h4>Kommentek:</h4>

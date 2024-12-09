@@ -68,23 +68,16 @@ adatbazis kapcsolat fogja hasznalni
     /*Cimkek lekerese egy adott kephez*/
     public function getTagsForPhoto($photoId)
     {
-        /*Azokat a cimkeket keri le ami egy adott kephez tartozik*/
-        $sql = "SELECT t.name FROM tags t
-JOIN photo_tags pt ON t.tag_id = pt.tag_id
-WHERE pt.photo_id = ?";
+        $sql = "SELECT t.name AS tag_name
+            FROM tags t
+            INNER JOIN photo_tags pt ON t.tag_id = pt.tag_id
+            WHERE pt.photo_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $photoId);
         $stmt->execute();
         $result = $stmt->get_result();
-
-        $tags = [];
-        while ($row = $result->fetch_assoc()) {
-            /*Cimkek hozzaadasa a tombhoz*/
-            $tags[] = $row['name'];
-        }
-
-        $stmt->close();
-        /*Visszateriyi a cimkek tombjet*/
-        return $tags;
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+
 }

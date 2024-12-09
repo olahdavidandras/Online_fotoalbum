@@ -55,18 +55,6 @@ adatbazis kapcsolat fogja hasznalni
         return [];
     }
 
-    /*Cimkek lekerese egy kephez*/
-    public function getTagsForPhoto($photoId)
-    {
-        $sql = "SELECT t.name FROM tags t 
-            INNER JOIN photo_tags pt ON t.tag_id = pt.tag_id 
-            WHERE pt.photo_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $photoId);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
-
     public function getSharedPhotos()
     {
         $sql = "SELECT p.photo_id, p.title, p.description, p.photo_data, p.created_at, u.username 
@@ -111,21 +99,21 @@ adatbazis kapcsolat fogja hasznalni
         return $stmt->execute();
     }
 
-    public function getPhotoById($photoId)
-    {
-        $sql = "SELECT photo_id, user_id, title, description, photo_data, created_at, is_shared 
-            FROM photos 
-            WHERE photo_id = ?";
-        $stmt = $this->conn->prepare($sql);
-
-        if ($stmt) {
-            $stmt->bind_param("i", $photoId);
-            $stmt->execute();
-            return $stmt->get_result()->fetch_assoc();
-        }
-
-        return null;
-    }
+//    public function getPhotoById($photoId)
+//    {
+//        $sql = "SELECT photo_id, user_id, title, description, photo_data, created_at, is_shared
+//            FROM photos
+//            WHERE photo_id = ?";
+//        $stmt = $this->conn->prepare($sql);
+//
+//        if ($stmt) {
+//            $stmt->bind_param("i", $photoId);
+//            $stmt->execute();
+//            return $stmt->get_result()->fetch_assoc();
+//        }
+//
+//        return null;
+//    }
 
 
 }

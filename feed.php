@@ -3,6 +3,7 @@ session_start();
 include 'db_connect.php';
 include 'Picture.php';
 include 'Comment.php';
+include 'Tags.php';
 
 if (!isset($conn)) {
     die("Hiba: Nincs adatbázis kapcsolat!");
@@ -10,17 +11,22 @@ if (!isset($conn)) {
 
 $picture = new Picture($conn);
 $comment = new Comment($conn);
+$tags = new Tags($conn);
 
+/*Lekeri a megosztott kepeket az adatbazisbol*/
 $sharedPhotos = $picture->getSharedPhotos();
 
+/*Ellenorzes a comment_text es photo_id mezok letezesere*/
 if ($_SERVER['REQUEST_METHOD'] === 'POST'
     && isset($_POST['comment_text'], $_POST['photo_id'])
 ) {
+    /*A kommentet es kepet hozzateszi a felhasznalohoz*/
     $commentText = trim($_POST['comment_text']);
     $photoId = intval($_POST['photo_id']);
     $userId = $_SESSION['user_id'];
 
     if (!empty($commentText) && $photoId > 0) {
+        /*Comment elmentese az adatbazisba*/
         if ($comment->addComment($photoId, $userId, $commentText)) {
             header("Location: feed.php");
             exit();
@@ -48,7 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 </form>
 <hr>
 
+<!--Kepek megjelenitese -->
 <?php if ($sharedPhotos): ?>
+    <!--Ha vannak megosztott kepek akkor az osszeset megjeleniti-->
     <?php foreach ($sharedPhotos as $photo): ?>
         <div style="border: 1px solid #ccc; margin-bottom: 20px; padding: 10px;">
             <img src="data:image/jpeg;base64,<?= base64_encode(
@@ -61,7 +69,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
                     $photo['username']
                 ) ?></p>
             <p><strong>Feltöltve:</strong> <?= $photo['created_at']; ?></p>
-
+            <!--A kepekhez tartozo cimkek megjelenitese ha vannak -->
+            <p><strong>Címkék:</strong>
+                <?php
+                $photoTags = $tags->getTagsForPhoto($photo['photo_id']);
+                if ($photoTags) {
+                    echo implode(', ', array_column($photoTags, 'tag_name'));
+                } else {
+                    echo 'Nincsenek címkék.';
+                }
+                ?>
+            </p>
+            <!--Kommentek megjelenitese ha vannak-->
             <h4>Kommentek:</h4>
             <?php
             $comments = $comment->getCommentsByPhoto($photo['photo_id']);
