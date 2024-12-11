@@ -1,8 +1,16 @@
 <?php
 session_start();
+require '../../vendor/autoload.php'; // Ensure this path points to the Composer
+// autoload file
 include 'db_connect.php';
 include 'Picture.php';
 include 'Tags.php';
+
+use Spatie\Image\Image;
+use Spatie\Image\Manipulations;
+
+
+
 
 if (!file_exists('db_connect.php')) {
     die("Nem található a kapcsolatot indító file!");
@@ -22,39 +30,51 @@ $picture = new Picture($conn);
 $tags = new Tags($conn);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    /*Leszedi a folosleges vesszoket es spaceket*/
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
     $tagsInput = trim($_POST['tags']);
-    $photoData = file_get_contents($_FILES['photo']['tmp_name']);
+    $uploadedFilePath = $_FILES['photo']['tmp_name'];
 
-    /*Ellenorzes, hogy a feltoltes osszes mezoje ki legyen toltve*/
-    if (empty($title) || empty($description) || empty($photoData)) {
+    if (empty($title) || empty($description) || empty($uploadedFilePath)) {
         echo "Minden mezőt ki kell tölteni.";
     } else {
-        /*Kep feltoltese az adatbazisba*/
+
+        $uploadsDir = 'uploads/';
+        if (!is_dir($uploadsDir)) {
+            mkdir($uploadsDir, 0777, true); // Create uploads/ if not exists
+        }
+
+        // Save the original uploaded file to a new location
+        $newImagePath = 'uploads/' . uniqid() . '.jpg';
+        move_uploaded_file($uploadedFilePath, $newImagePath);
+
+        // Resize the image to a fixed width and height
+        $processedImagePath = 'uploads/processed_' . uniqid() . '.jpg';
+        Image::load($newImagePath)
+            ->driver(Manipulations::DRIVER_GD) // Use GD driver
+            ->width(500)
+            ->height(500)
+            ->save($processedImagePath);
+
+        // Read the processed image as binary data for database storage
+        $photoData = file_get_contents($processedImagePath);
+
         $photoId = $picture->uploadPhoto(
             $_SESSION['user_id'], $title, $description, $photoData
         );
 
         if ($photoId) {
-            echo "Kép sikeresen feltöltve!";
+            echo "Kép sikeresen feltöltve és feldolgozva!";
 
-            /*Cimkek feldolgozasa*/
             if (!empty($tagsInput)) {
-                /*Cimkek tombbe alakitasa, amik vesszovel elvalasztva
-                erkeznek meg es az explode utasitas oldja ezt a problemat meg*/
                 $tagsArray = array_map('trim', explode(',', $tagsInput));
                 $tagIds = [];
 
-                /*Az adTag metodus meghivasa*/
                 foreach ($tagsArray as $tagName) {
                     $tagId = $tags->addTag($tagName);
                     $tagIds[] = $tagId;
                 }
 
-                /*Cimkek tarsitasa a kephez*/
                 $tags->attachTagsToPhoto($photoId, $tagIds);
             }
         } else {
@@ -63,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="hu">

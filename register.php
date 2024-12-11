@@ -37,25 +37,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regisztráció</title>
+    <title>Registracion</title>
 </head>
 <body>
-<h2>Regisztrációs űrlap</h2>
-<form method="POST">
-    <label for="username">Felhasználónév:</label><br>
-    <input type="text" id="username" name="username" required><br><br>
-
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email" required><br><br>
-
-    <label for="password">Jelszó:</label><br>
-    <input type="password" id="password" name="password" required><br><br>
-
-    <button type="submit">Regisztráció</button>
-</form>
+<div style="background-color: #333; color: #fff; text-align: center; padding: 10px;">
+    <h1 style="margin: 0;">Regisztráció</h1>
+</div>
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f9f9f9;">
+    <form method="POST"
+          style="background-color: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 5px; max-width: 400px; width: 100%;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Felhasználónév:</label>
+        <input type="text" name="username" required
+               style="width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Email:</label>
+        <input type="email" name="email" required
+               style="width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Jelszó:</label>
+        <input type="password" name="password" required
+               style="width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+        <button type="submit"
+                style="width: 100%; background-color: #007bff; color: #fff; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+            Regisztráció
+        </button>
+    </form>
+</div>
 </body>
 </html>

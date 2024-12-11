@@ -76,15 +76,35 @@ if (isset($_COOKIE['remember_me'])) {
 }
 ?>
 
-<form method="POST">
-    <label>Email:</label>
-    <input type="email" name="email" required><br>
-    <label>Jelszó:</label>
-    <input type="password" name="password" required><br>
-    <label for="remember_me">
-        <input type="checkbox" id="remember_me" name="remember_me"> Remember me
-    </label><br><br>
-
-    <button type="submit">Bejelentkezés</button>
-    <a href="register.php">Regisztrálj itt!</a>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading</title>
+</head>
+<body>
+<div style="background-color: #333; color: #fff; text-align: center; padding: 10px;">
+    <h1 style="margin: 0;">Login</h1>
+</div>
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f9f9f9;">
+    <form method="POST"
+          style="background-color: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 5px; max-width: 400px; width: 100%;">
+        <h2 style="color: #007bff; text-align: center;">Bejelentkezés</h2>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Email:</label>
+        <input type="email" name="email" required
+               style="width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Jelszó:</label>
+        <input type="password" name="password" required
+               style="width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+        <label style="display: block; margin-bottom: 15px;">
+            <input type="checkbox" name="remember_me"> Remember me
+        </label>
+        <button type="submit"
+                style="width: 100%; background-color: #007bff; color: #fff; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+            Bejelentkezés
+        </button>
+    </form>
+</div>
+</body>
+</html>
