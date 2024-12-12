@@ -47,34 +47,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         <title>Feed</title>
     </head>
 <body>
-    <h2>Megosztott Képek Feed</h2>
-
-    <form action="gallery.php" method="GET" style="display: inline;">
-        <button type="submit">Vissza a Galériához</button>
-    </form>
-    <hr>
+    <!-- Feed Header -->
+    <div style="text-align: center; margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
+        <h2 style="color: #000000; margin-bottom: 10px;">Megosztott Képek Feed</h2>
+        <form action="gallery.php" method="GET" style="display: inline;">
+            <button type="submit" style="background-color: #007bff; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">Vissza a Galériához</button>
+        </form>
+        <hr style="margin: 20px auto; width: 80%; border: 1px solid #ddd;">
+    </div>
 
     <!-- Kepek megjelenitese -->
 <?php if ($sharedPhotos): ?>
     <!-- Ha vannak megosztott kepek, akkor az osszeset megjeleniti -->
     <?php foreach ($sharedPhotos as $photo): ?>
         <div style="border: 1px solid #ddd; margin-bottom: 20px; padding: 15px; border-radius: 5px; background-color: #fff; max-width: 800px; margin: 20px auto;">
-            <img src="data:image/jpeg;base64,<?= base64_encode(
-                $photo['photo_data']
-            ) ?>" alt="<?= htmlspecialchars($photo['title']) ?>"
-                 style="max-width: 100%; border-radius: 5px; display: block; margin: 0 auto;">
-            <h3 style="color: #007bff; text-align: center; margin-top: 10px;"><?= htmlspecialchars(
-                    $photo['title']
-                ) ?></h3>
-            <p style="color: #333; text-align: center;"><?= htmlspecialchars(
-                    $photo['description']
-                ) ?></p>
-            <p style="color: #666; font-size: 14px; text-align: center;">
-                <strong>Feltöltő:</strong> <?= htmlspecialchars(
-                    $photo['username']
-                ) ?></p>
-            <p style="color: #666; font-size: 14px; text-align: center;">
-                <strong>Feltöltve:</strong> <?= $photo['created_at']; ?></p>
+            <img src="data:image/jpeg;base64,<?= base64_encode($photo['photo_data']) ?>" alt="<?= htmlspecialchars($photo['title']) ?>" style="max-width: 100%; border-radius: 5px; display: block; margin: 0 auto;">
+            <h3 style="color: #007bff; text-align: center; margin-top: 10px;"><?= htmlspecialchars($photo['title']) ?></h3>
+            <p style="color: #333; text-align: center;"><?= htmlspecialchars($photo['description']) ?></p>
+            <p style="color: #666; font-size: 14px; text-align: center;"><strong>Feltöltő:</strong> <?= htmlspecialchars($photo['username']) ?></p>
+            <p style="color: #666; font-size: 14px; text-align: center;"><strong>Feltöltve:</strong> <?= $photo['created_at']; ?></p>
             <!-- A kepekhez tartozo cimkek megjelenitese, ha vannak -->
             <p style="color: #333; text-align: center;"><strong>Címkék:</strong>
                 <?php
@@ -94,34 +85,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
                 <ul style="list-style-type: none; padding: 0; margin: 0;">
                     <?php foreach ($comments as $comm): ?>
                         <li style="padding: 10px; border-bottom: 1px solid #ddd; color: #333;">
-                            <strong style="color: #007bff;"><?= htmlspecialchars(
-                                    $comm['username']
-                                ); ?>:</strong>
+                            <strong style="color: #007bff;"><?= htmlspecialchars($comm['username']); ?>:</strong>
                             <?= htmlspecialchars($comm['comment_text']); ?>
-                            <em style="color: #666; font-size: 12px;">(<?= $comm['created_at']; ?>
-                                )</em>
+                            <em style="color: #666; font-size: 12px;">(<?= $comm['created_at']; ?>)</em>
                         </li>
                     <?php endforeach; ?>
                 </ul>
             <?php else: ?>
-                <p style="text-align: center; color: #666;">Még nincsenek
-                    kommentek.</p>
+                <p style="text-align: center; color: #666;">Még nincsenek kommentek.</p>
             <?php endif; ?>
 
             <form method="POST" style="margin-top: 20px; text-align: center;">
-                <textarea name="comment_text" rows="2" cols="50"
-                          placeholder="Írj egy kommentet..." required
-                          style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea><br>
-                <input type="hidden" name="photo_id"
-                       value="<?= $photo['photo_id']; ?>">
-                <button type="submit"
-                        style="background-color: #007bff; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
-                    Hozzáadás
-                </button>
+                <textarea name="comment_text" rows="2" cols="50" placeholder="Írj egy kommentet..." required style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea><br>
+                <input type="hidden" name="photo_id" value="<?= $photo['photo_id']; ?>">
+                <button type="submit" style="background-color: #007bff; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">Hozzáadás</button>
             </form>
         </div>
     <?php endforeach; ?>
 <?php else: ?>
-    <p style="text-align: center; color: #666;">Még nincsenek megosztott
-        képek.</p>
+    <p style="text-align: center; color: #666;">Még nincsenek megosztott képek.</p>
 <?php endif; ?>

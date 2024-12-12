@@ -15,7 +15,7 @@ if (isset($_COOKIE['remember_me'])) {
 
 session_destroy();
 
-// Atiranyitas a login-ra
-header("Location: login.php");
+// Atiranyitas a index-re
+header("Location: index.php");
 exit;
 ?>

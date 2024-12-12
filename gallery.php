@@ -90,136 +90,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Galéria</title>
 </head>
 <body>
-<h2>Képgaléria</h2>
-
-<form action="feed.php" method="GET" style="display: inline;">
-    <button type="submit">Feed</button>
-</form>
-<form action="upload.php" method="GET" style="display: inline;">
-    <button type="submit">Feltöltés</button>
-</form>
-<form action="logout.php" method="GET" style="display: inline;">
-    <button type="submit">Kijelentkezés</button>
-</form>
-<hr>
+<div style="text-align: center; margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
+    <h2 style="color: #000000; margin-bottom: 10px;">Képgaléria</h2>
+    <form action="feed.php" method="GET" style="display: inline;">
+        <button type="submit"
+                style="background-color: #007bff; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+            Feed
+        </button>
+    </form>
+    <form action="upload.php" method="GET" style="display: inline;">
+        <button type="submit"
+                style="background-color: #28a745; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+            Feltöltés
+        </button>
+    </form>
+    <form action="logout.php" method="GET" style="display: inline;">
+        <button type="submit"
+                style="background-color: #dc3545; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+            Kijelentkezés
+        </button>
+    </form>
+    <hr style="margin: 20px auto; width: 80%; border: 1px solid #ddd;">
+</div>
 
 <?php if ($photos): ?>
-    <?php foreach ($photos as $photo): ?>
-        <div style="border: 1px solid #ccc; margin-bottom: 20px; padding: 10px;">
-            <img src="data:image/jpeg;base64,<?= base64_encode(
-                $photo['photo_data']
-            ) ?>"
-                 alt="<?= htmlspecialchars($photo['title']) ?>"
-                 style="max-width: 200px;">
-            <h3><?= htmlspecialchars($photo['title']) ?></h3>
-            <p><?= htmlspecialchars($photo['description']) ?></p>
-            <p><strong>Feltöltve:</strong> <?= $photo['created_at']; ?></p>
-
-            <!-- Letöltés gomb -->
-            <form method="GET" action="download_photo.php"
-                  style="display: inline;">
-                <input type="hidden" name="photo_id"
-                       value="<?= $photo['photo_id']; ?>">
-                <button type="submit">Letöltés</button>
-            </form>
-
-            <!-- Megosztás vagy Megosztás visszavonása -->
-            <?php if ($photo['is_shared']): ?>
-                <form method="POST" style="display: inline;">
-                    <input type="hidden" name="unshare_photo_id"
-                           value="<?= $photo['photo_id'] ?>">
-                    <button type="submit">Megosztás visszavonása</button>
-                </form>
-            <?php else: ?>
-                <form method="POST" style="display: inline;">
-                    <input type="hidden" name="share_photo_id"
-                           value="<?= $photo['photo_id'] ?>">
-                    <button type="submit">Megosztás</button>
-                </form>
-            <?php endif; ?>
-
-            <!-- Törlés gomb -->
-            <form method="POST" style="display: inline;">
-                <input type="hidden" name="delete_photo_id"
-                       value="<?= $photo['photo_id'] ?>">
-                <button type="submit"
-                        onclick="return confirm('Biztosan törlöd a képet?')">
-                    Törlés
-                </button>
-            </form>
-
-            <!-- Módosítás gomb -->
-            <button type="button"
-                    onclick="document.getElementById('edit-form-<?= $photo['photo_id'] ?>').style.display = 'block';">
-                Módosítás
-            </button>
-
-            <!-- Módosítási űrlap -->
-            <form method="POST" style="display: none; margin-top: 10px;"
-                  id="edit-form-<?= $photo['photo_id'] ?>">
-                <input type="hidden" name="update_photo_id"
-                       value="<?= $photo['photo_id'] ?>">
-                <label for="title-<?= $photo['photo_id'] ?>">Cím:</label>
-                <input type="text" name="title"
-                       id="title-<?= $photo['photo_id'] ?>"
-                       value="<?= htmlspecialchars($photo['title']) ?>"
-                       required><br>
-                <label for="description-<?= $photo['photo_id'] ?>">Leírás:</label>
-                <textarea name="description"
-                          id="description-<?= $photo['photo_id'] ?>" rows="3"
-                          cols="50" required><?= htmlspecialchars(
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px auto; max-width: 1200px; padding: 10px;">
+        <?php foreach ($photos as $photo): ?>
+            <div style="border: 1px solid #ddd; border-radius: 5px; background-color: #fff; padding: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                <img src="data:image/jpeg;base64,<?= base64_encode(
+                    $photo['photo_data']
+                ) ?>" alt="<?= htmlspecialchars($photo['title']) ?>"
+                     style="max-width: 100%; border-radius: 5px;">
+                <h3 style="color: #007bff; text-align: center;"><?= htmlspecialchars(
+                        $photo['title']
+                    ) ?></h3>
+                <p style="color: #333; text-align: center;"><?= htmlspecialchars(
                         $photo['description']
-                    ) ?></textarea><br>
-                <button type="submit">Mentés</button>
-                <button type="button"
-                        onclick="document.getElementById('edit-form-<?= $photo['photo_id'] ?>').style.display = 'none';">
-                    Mégse
-                </button>
-            </form>
-            <p><strong>Címkék:</strong>
-                <?php
-                $photoTags = $tags->getTagsForPhoto($photo['photo_id']);
-                if ($photoTags) {
-                    echo implode(', ', array_column($photoTags, 'tag_name'));
-                } else {
-                    echo 'Nincsenek címkék.';
-                }
-                ?>
-            </p>
+                    ) ?></p>
+                <p style="color: #666; font-size: 14px; text-align: center;">
+                    <strong>Feltöltve:</strong> <?= $photo['created_at']; ?></p>
+                <p style="color: #333; text-align: center;">
+                    <strong>Címkék:</strong>
+                    <?php
+                    $photoTags = $tags->getTagsForPhoto($photo['photo_id']);
+                    if ($photoTags) {
+                        echo implode(
+                            ', ', array_column($photoTags, 'tag_name')
+                        );
+                    } else {
+                        echo 'Nincsenek címkék.';
+                    }
+                    ?>
+                </p>
 
+                <form method="GET" action="download_photo.php"
+                      style="margin-bottom: 10px; text-align: center;">
+                    <input type="hidden" name="photo_id"
+                           value="<?= $photo['photo_id']; ?>">
+                    <button type="submit"
+                            style="background-color: #007bff; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                        Letöltés
+                    </button>
+                </form>
 
-            <!-- Kommentek -->
-            <h4>Kommentek:</h4>
-            <?php
-            $comments = $comment->getCommentsByPhoto($photo['photo_id']);
-            if ($comments): ?>
-                <ul>
-                    <?php foreach ($comments as $comm): ?>
-                        <li>
-                            <strong><?= htmlspecialchars($comm['username']); ?>
-                                :</strong>
-                            <?= htmlspecialchars($comm['comment_text']); ?>
-                            <em>(<?= $comm['created_at']; ?>)</em>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <p>Még nincsenek kommentek.</p>
-            <?php endif; ?>
+                <?php if ($photo['is_shared']): ?>
+                    <form method="POST"
+                          style="margin-bottom: 10px; text-align: center;">
+                        <input type="hidden" name="unshare_photo_id"
+                               value="<?= $photo['photo_id'] ?>">
+                        <button type="submit"
+                                style="background-color: #ffc107; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                            Megosztás visszavonása
+                        </button>
+                    </form>
+                <?php else: ?>
+                    <form method="POST"
+                          style="margin-bottom: 10px; text-align: center;">
+                        <input type="hidden" name="share_photo_id"
+                               value="<?= $photo['photo_id'] ?>">
+                        <button type="submit"
+                                style="background-color: #28a745; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                            Megosztás
+                        </button>
+                    </form>
+                <?php endif; ?>
 
-            <!-- Komment hozzáadása -->
-            <form method="POST">
-                <textarea name="comment_text" rows="2" cols="50"
-                          placeholder="Írj egy kommentet..."
-                          required></textarea><br>
-                <input type="hidden" name="photo_id"
-                       value="<?= $photo['photo_id']; ?>">
-                <button type="submit">Hozzáadás</button>
-            </form>
-        </div>
-    <?php endforeach; ?>
+                <form method="POST"
+                      style="margin-bottom: 10px; text-align: center;">
+                    <input type="hidden" name="delete_photo_id"
+                           value="<?= $photo['photo_id'] ?>">
+                    <button type="submit"
+                            style="background-color: #dc3545; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;"
+                            onclick="return confirm('Biztosan törlöd a képet?')">
+                        Törlés
+                    </button>
+                </form>
+            </div>
+        <?php endforeach; ?>
+    </div>
 <?php else: ?>
-    <p>Nincsenek feltöltött képeid.</p>
+    <p style="text-align: center; color: #666;">Nincsenek feltöltött képeid.</p>
 <?php endif; ?>
 </body>
 </html>
+
+

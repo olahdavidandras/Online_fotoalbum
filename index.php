@@ -1,4 +1,10 @@
 <?php
+session_start();
+
+$isLoggedIn = isset($_SESSION['user_id']);
+$userName = $isLoggedIn && isset($_SESSION['user_name'])
+    ? $_SESSION['user_name'] : null;
+
 ?>
 
 <!DOCTYPE html>
@@ -9,21 +15,34 @@
     <title>PhotoShare - Home</title>
 </head>
 <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; color: #333;">
+
 <!-- Header -->
 <header style="background-color: #333; color: white; text-align: center; padding: 20px;">
     <h1>Welcome to PhotoShare</h1>
-    <p style="font-size: 18px;">Share your moments, explore galleries, and
-        connect with friends.</p>
+    <p style="font-size: 18px;">
+        <?php if ($isLoggedIn): ?>
+            Welcome back! Share your moments and connect with your friends.
+        <?php else: ?>
+            Share your moments, explore galleries, and connect with friends.
+        <?php endif; ?>
+    </p>
 </header>
 
 <!-- Navigation Links -->
 <nav style="text-align: center; margin: 20px;">
-    <a href="login.php"
-       style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #007bff; color: white; border-radius: 5px;">Login</a>
-    <a href="register.php"
-       style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #28a745; color: white; border-radius: 5px;">Register</a>
-    <a href="gallery.php"
-       style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #6c757d; color: white; border-radius: 5px;">Gallery</a>
+    <?php if ($isLoggedIn): ?>
+        <a href="logout.php"
+           style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #dc3545; color: white; border-radius: 5px;">Logout</a>
+        <a href="gallery.php"
+           style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #6c757d; color: white; border-radius: 5px;">Gallery</a>
+    <?php else: ?>
+        <a href="login.php"
+           style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #007bff; color: white; border-radius: 5px;">Login</a>
+        <a href="register.php"
+           style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #28a745; color: white; border-radius: 5px;">Register</a>
+        <a href="gallery.php"
+           style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #6c757d; color: white; border-radius: 5px;">Gallery</a>
+    <?php endif; ?>
 </nav>
 
 <!-- Section 1: About PhotoShare -->
