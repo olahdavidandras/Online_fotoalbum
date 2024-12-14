@@ -15,7 +15,7 @@ if (isset($_COOKIE['remember_me'])) {
 
 session_destroy();
 
-// Atiranyitas a index-re
+// Atiranyitas az index-re
 header("Location: index.php");
 exit;
 ?>

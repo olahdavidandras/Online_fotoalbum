@@ -57,65 +57,60 @@ adatbazis kapcsolat fogja hasznalni
 
     public function getSharedPhotos()
     {
+        /*Osszekapcsolja a kepek tablajat a felhasznalok tablavals es
+           kiszede a megosztott kepeket*/
         $sql = "SELECT p.photo_id, p.title, p.description, p.photo_data, p.created_at, u.username 
             FROM photos p 
             INNER JOIN users u ON p.user_id = u.user_id 
             WHERE p.is_shared = 1 
             ORDER BY p.created_at DESC";
         $result = $this->conn->query($sql);
+        /*Az eredmenyt egy asszociativ tombkent adja vissza*/
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+
     public function updatePhoto($photoId, $title, $description)
     {
+        /*Frissiti a kep cimet es leirasat a megadott ID alapjan*/
         $sql
             = "UPDATE photos SET title = ?, description = ? WHERE photo_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ssi", $title, $description, $photoId);
+        /*Visszateresi ertekkent jelzi, hogy a frissites sikeres volt-e*/
         return $stmt->execute();
     }
 
     public function deletePhoto($photoId)
     {
+        /*A megadott id alapjan torli a kepet az adatbazisbol */
         $sql = "DELETE FROM photos WHERE photo_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $photoId);
+        /*Visszateresi ertekkent jelzi, hogy a torles sikeres volt-e*/
         return $stmt->execute();
     }
 
     public function sharePhoto($photoId)
     {
+        /*Az is_shared mezo erteket 1-re allitja, ezzel a kepet megosztva*/
         $sql = "UPDATE photos SET is_shared = 1 WHERE photo_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $photoId);
+        /*Visszateresi ertekkent jelzi, hogy a frissites sikeres volt-e*/
         return $stmt->execute();
     }
 
     public function unsharePhoto($photoId)
     {
+        /*Az is_shared mezo erteket 0-ra allitja, ezzel a megosztas
+        megszunteti*/
         $sql = "UPDATE photos SET is_shared = 0 WHERE photo_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $photoId);
+        /*Visszateresi ertekkent jelzi, hogy a frissites sikeres volt-e*/
         return $stmt->execute();
     }
-
-//    public function getPhotoById($photoId)
-//    {
-//        $sql = "SELECT photo_id, user_id, title, description, photo_data, created_at, is_shared
-//            FROM photos
-//            WHERE photo_id = ?";
-//        $stmt = $this->conn->prepare($sql);
-//
-//        if ($stmt) {
-//            $stmt->bind_param("i", $photoId);
-//            $stmt->execute();
-//            return $stmt->get_result()->fetch_assoc();
-//        }
-//
-//        return null;
-//    }
-
-
 }
 
 ?>

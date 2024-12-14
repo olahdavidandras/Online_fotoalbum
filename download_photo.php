@@ -22,6 +22,9 @@ if (isset($_GET['photo_id'])) {
     $stmt->bind_result($title, $photoData);
 
     if ($stmt->fetch()) {
+        /*Output buffer megtisztitasa*/
+        ob_clean();
+        flush();
         /*A bongeszo kepkent kezeli az adatokat*/
         header(
             "Content-Type: image/jpeg"

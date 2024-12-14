@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+/*Ellenorzi, hogy a session-be van-e user_id*/
 $isLoggedIn = isset($_SESSION['user_id']);
 $userName = $isLoggedIn && isset($_SESSION['user_name'])
     ? $_SESSION['user_name'] : null;
@@ -16,7 +17,6 @@ $userName = $isLoggedIn && isset($_SESSION['user_name'])
 </head>
 <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; color: #333;">
 
-<!-- Header -->
 <header style="background-color: #333; color: white; text-align: center; padding: 20px;">
     <h1>Welcome to PhotoShare</h1>
     <p style="font-size: 18px;">
@@ -28,7 +28,6 @@ $userName = $isLoggedIn && isset($_SESSION['user_name'])
     </p>
 </header>
 
-<!-- Navigation Links -->
 <nav style="text-align: center; margin: 20px;">
     <?php if ($isLoggedIn): ?>
         <a href="logout.php"
@@ -45,7 +44,6 @@ $userName = $isLoggedIn && isset($_SESSION['user_name'])
     <?php endif; ?>
 </nav>
 
-<!-- Section 1: About PhotoShare -->
 <section
         style="padding: 20px; background-color: white; margin: 20px auto; max-width: 800px; border-radius: 5px; border: 1px solid #ddd;">
     <h2 style="text-align: center; color: #007bff;">About PhotoShare</h2>

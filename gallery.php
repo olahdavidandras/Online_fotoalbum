@@ -9,14 +9,17 @@ if (!isset($conn)) {
     die("Hiba: Nincs adatbázis kapcsolat!");
 }
 
+/*Az osztalyok peldanyositasa*/
 $picture = new Picture($conn);
 $tags = new Tags($conn);
 $comment = new Comment($conn);
 
+/*Felhasznalo azonositojanak es kepeinek a lekerese*/
 $userId = $_SESSION['user_id'];
 $photos = $picture->getPhotosByUser($userId);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    /*Kep torlese*/
     if (isset($_POST['delete_photo_id'])) {
         $photoId = intval($_POST['delete_photo_id']);
         if ($picture->deletePhoto($photoId)) {
@@ -26,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Hiba történt a kép törlésekor.";
         }
     } elseif (isset($_POST['unshare_photo_id'])) {
+        /*Kep megosztasanak a visszavonasa*/
         $photoId = intval($_POST['unshare_photo_id']);
         if ($picture->unsharePhoto($photoId)) {
             header("Location: gallery.php");
@@ -34,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Hiba történt a megosztás visszavonásakor.";
         }
     } elseif (isset($_POST['share_photo_id'])) {
+        /*Kep megosztasa*/
         $photoId = intval($_POST['share_photo_id']);
         if ($picture->sharePhoto(
             $photoId
@@ -45,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Hiba történt a megosztáskor.";
         }
     } elseif (isset($_POST['update_photo_id'], $_POST['title'], $_POST['description'])) {
+        /*Kep cimenek es leirasanak frissitese*/
         $photoId = intval($_POST['update_photo_id']);
         $title = trim($_POST['title']);
         $description = trim($_POST['description']);
@@ -55,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Hiba történt a kép frissítésekor.";
         }
     } elseif (isset($_POST['comment_text'], $_POST['photo_id'])) {
+        /*Kommentek mentese*/
         $commentText = trim($_POST['comment_text']);
         $photoId = intval($_POST['photo_id']);
         if (!empty($commentText) && $photoId > 0) {
@@ -183,6 +190,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             style="background-color: #dc3545; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;"
                             onclick="return confirm('Biztosan törlöd a képet?')">
                         Törlés
+                    </button>
+                </form>
+                <h4 style="color: #007bff; text-align: center;">Kommentek:</h4>
+                <?php
+                $comments = $comment->getCommentsByPhoto($photo['photo_id']);
+                if ($comments): ?>
+                    <ul style="list-style-type: none; padding: 0; margin: 0;">
+                        <?php foreach ($comments as $comm): ?>
+                            <li style="padding: 10px; border-bottom: 1px solid #ddd; color: #333;">
+                                <strong style="color: #007bff;"><?= htmlspecialchars(
+                                        $comm['username']
+                                    ); ?>:</strong>
+                                <?= htmlspecialchars($comm['comment_text']); ?>
+                                <em style="color: #666; font-size: 12px;">(<?= $comm['created_at']; ?>
+                                    )</em>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <p style="text-align: center; color: #666;">Még nincsenek
+                        kommentek.</p>
+                <?php endif; ?>
+                <form method="POST"
+                      style="margin-top: 20px; text-align: center;">
+                    <textarea name="comment_text" rows="2" cols="50"
+                              placeholder="Írj egy kommentet..." required
+                              style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea><br>
+                    <input type="hidden" name="photo_id"
+                           value="<?= $photo['photo_id']; ?>">
+                    <button type="submit"
+                            style="background-color: #007bff; color: #fff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                        Hozzáadás
                     </button>
                 </form>
             </div>
