@@ -39,8 +39,6 @@ $userName = $isLoggedIn && isset($_SESSION['user_name'])
            style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #007bff; color: white; border-radius: 5px;">Login</a>
         <a href="register.php"
            style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #28a745; color: white; border-radius: 5px;">Register</a>
-        <a href="gallery.php"
-           style="margin: 10px; padding: 10px 20px; text-decoration: none; background-color: #6c757d; color: white; border-radius: 5px;">Gallery</a>
     <?php endif; ?>
 </nav>
 
